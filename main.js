@@ -8,60 +8,46 @@ const ctx = canvas.getContext('2d');
 generateButton.addEventListener('click', () => {
 
 
-    generateSpiral(matrixSize.value, firstNumber.value)
+    generateSpiral(matrixSize.value, parseInt(firstNumber.value))
 
 })
 
 function generateSpiral(matrixSize, firstNumber) {
-
     canvas.width = matrixSize;
     canvas.height = matrixSize;
 
-    let matrixCenter = [(matrixSize / 2) - 1, (matrixSize / 2) - 1] //srodek matrycy minus 1 bo zaczynam w prawo
-    //console.log(matrixCenter)
-
-    // let 
-
-    // for(let i = 0; i < matrixSize; i++){
-    //     switch()
-    // }
-
-
+    let matrixCenter = [(matrixSize / 2) - 1, (matrixSize / 2) - 1] 
 
     ctx.fillStyle = "#ff0000";
     ctx.fillRect(matrixCenter[0], matrixCenter[1], 1, 1);
-
-
     let direction = "right";
-    let movements = 1;
     let currentPoint = matrixCenter;
-    let rightMoves = 0
-    let upMoves = 0
-    let leftMoves = 0
+    let rightMoves = 0;
+    let upMoves = 0;
+    let leftMoves = 0;
     let downMoves = 0;
     let previousRightMoves = 0;
     let previousUpMoves = 0;
     let previousLeftMoves = 0;
     let previousDownMoves = 0;
-    for(let i = 2; i < (matrixSize*matrixSize) -1; i++) {
+    let lastNumber;
+    let allPrimes = [];
+    var t0 = performance.now();
+    for(let i = firstNumber + 1; i < (matrixSize*matrixSize) + firstNumber + 1; i++) {
         let numToCheck = i;
         let number = isPrime(numToCheck);
-        //console.log(numToCheck, number)
-
-        let movementsInThisTour = movements
-        // for (let j = 0; j < movementsInThisTour ; j++) {
-            console.log(direction)
+        if(number){
+            allPrimes.push(numToCheck)
+        }
             switch (direction) {
                 case "right":
                     if (number) {
                         ctx.fillStyle = "#000000";
-                        ctx.fillRect(currentPoint[0] + 1, currentPoint[1], 1, 1);
                     } else {
                         ctx.fillStyle = "#ffffff";
-                        ctx.fillRect(currentPoint[0] + 1, currentPoint[1], 1, 1);
                     }
+                    ctx.fillRect(currentPoint[0] + 1, currentPoint[1], 1, 1);
                     rightMoves++
-                    //console.log("right moves : ", rightMoves)
                     currentPoint[0] += 1
                     if(rightMoves%2 == 1 && rightMoves > previousRightMoves){
                         direction = "up";
@@ -72,33 +58,27 @@ function generateSpiral(matrixSize, firstNumber) {
                 case "up":
                     if (number) {
                         ctx.fillStyle = "#000000";
-                        ctx.fillRect(currentPoint[0], currentPoint[1] - 1, 1, 1);
                     } else {
                         ctx.fillStyle = "#ffffff";
-                        ctx.fillRect(currentPoint[0], currentPoint[1] - 1, 1, 1);
                     }
+                    ctx.fillRect(currentPoint[0], currentPoint[1] - 1, 1, 1);
                     currentPoint[1] -= 1;
                     upMoves++
-                    //console.log("up moves : ", upMoves)
                     if(upMoves%2 == 1 && upMoves > previousUpMoves){
                         direction = "left";
                         previousUpMoves = upMoves;
                         leftMoves = 0;
-
                     }
-                    movements++
                     break;
                 case "left":
                     if (number) {
                         ctx.fillStyle = "#000000";
-                        ctx.fillRect(currentPoint[0] - 1, currentPoint[1], 1, 1);
                     } else {
                         ctx.fillStyle = "#ffffff";
-                        ctx.fillRect(currentPoint[0] - 1, currentPoint[1], 1, 1);
                     }
+                    ctx.fillRect(currentPoint[0] - 1, currentPoint[1], 1, 1);
                     currentPoint[0] -= 1
                     leftMoves++
-                    //console.log("left moves : ", leftMoves)
                     if(leftMoves%2 == 0 && leftMoves > previousLeftMoves){
                         direction = "down";
                         previousLeftMoves = leftMoves;
@@ -108,32 +88,27 @@ function generateSpiral(matrixSize, firstNumber) {
                 case "down":
                     if (number) {
                         ctx.fillStyle = "#000000";
-                        ctx.fillRect(currentPoint[0], currentPoint[1] + 1, 1, 1);
                     } else {
                         ctx.fillStyle = "#ffffff";
-                        ctx.fillRect(currentPoint[0], currentPoint[1] + 1, 1, 1);
                     }
+                    ctx.fillRect(currentPoint[0], currentPoint[1] + 1, 1, 1);
                     currentPoint[1] += 1;
                     downMoves++
-                    //console.log("down moves : ", downMoves)
                     if(downMoves % 2 == 0 && downMoves > previousDownMoves){
                         direction = "right";
                         previousDownMoves = downMoves; 
                         rightMoves = 0;
                     }
-                    movements++;
                    break;
-            }
-
-           console.log(currentPoint)
-
-    //    }
-
-
+                }
+                lastNumber = i;    
     }
-    console.log("petla skonczonas")
+    var t1 = performance.now();
+    let messeage = document.getElementById('first-number');
+    messeage.innerHTML = "Between: " + firstNumber + " and " + lastNumber + " there are " + allPrimes.length + " pirmes.";
+    let time = document.getElementById('time');
+    time.innerHTML = "Generating spiral took: " + ((t1-t0)/1000) + " seconds";
 }
-
 
 function isPrime(num) {
     for (var i = 2; i < num; i++)
